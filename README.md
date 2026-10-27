@@ -1,73 +1,77 @@
-# Files PWA: phone-first document manager
+# Files PWA
 
-This is a cross-platform installable web app for iPhone and Android. It is designed to be developed and tested from a phone browser. It has no application backend, login, subscription, or paid API.
+A phone-first, installable document manager for iPhone and Android. It is hosted as a static site on GitHub Pages and keeps documents in the current browser on the current device.
 
-## Features in this version
-- Installable PWA shell and local document library using IndexedDB.
-- Import multiple documents into local browser storage.
-- Scan via phone camera file capture, or choose existing images.
-- Create multi-page A4 PDFs from images, with grayscale, black-and-white, warm, brightness, contrast and rotation controls.
-- PDF viewer with page navigation.
-- PDF rotate, split selected pages, merge with other imported PDFs, and re-save/optimize (lossless re-save; not guaranteed to reduce size).
-- DOCX text extraction/preview.
-- DOCX-to-PDF conversion (layout may differ from Word).
-- PDF-to-DOCX conversion by extracting selectable text and creating a reflowed Word document.
-- Download/share/export and delete files.
-- Search and recent files.
-- PWA service worker caches app resources as they are loaded.
+## Latest requested changes
+- Home page's top-right search icon is replaced with an account-holder icon. It opens Settings.
+- Settings includes Google-only account sign-in and sign-out controls.
+- New users create their Files account through Google automatically; existing Google users sign in with the same button.
+- When signed in, the app shows the Google display name, email and profile picture when available.
+- The floating blue plus button is not part of the Home interface.
+- Me includes Account and devices, Trash and Settings.
 
-## Important limits
-- The camera capture flow is not a professional scanner with automatic paper-edge detection and perspective correction. It lets the user capture a page and provides enhancement filters.
-- PDF-to-DOCX does not reproduce the original page layout and does not OCR scanned-image PDFs.
-- DOCX-to-PDF renders the document as an image-based PDF and may not preserve complex pagination or selectable text.
-- Compression currently re-saves the PDF. It may not shrink the file significantly.
-- Offline operation is best after the app has first loaded while online. First-time dependency loading may require connectivity.
-- Browser storage can be cleared by iOS/Android settings. Export important files to Files/iCloud Drive/Google Drive as a backup.
-- A web app cannot fully match all native filesystem and camera features. Use native app development later if necessary.
+## Important: enable Google sign-in once
+The Google account interface is in the source, but authentication is not active until you add your Firebase web app configuration. Google authentication needs a Firebase project owned/configured by the app owner.
 
-## Phone-only workflow (recommended)
-The easiest route is a browser IDE that supports Vite/Node projects, such as StackBlitz or another online editor. You do not need Node installed locally for this workflow. Upload/import the project files, run `npm install` and `npm run dev` in its terminal, then preview the site. Check the editor's current free-plan and upload limits before choosing it.
+1. Open https://console.firebase.google.com/ and create a project. The free Spark plan is sufficient for this authentication setup.
+2. Open Authentication → Get started → Sign-in method and enable Google.
+3. Open Project settings → General → Your apps and register a Web app if one does not exist.
+4. Copy the web app's apiKey, authDomain, projectId, and appId.
+5. In this repository, open src/firebase.js and replace the four PASTE_..._HERE strings with the matching values.
+6. In Firebase Authentication settings, add bivaxc.github.io to Authorized domains if it is not already listed.
+7. Commit the change to main and wait for GitHub Actions to deploy.
 
-If you use a Node.js terminal app on iPhone:
-1. Extract the ZIP into a folder accessible to that app.
-2. Run `npm install`.
-3. Run `npm run dev -- --host 0.0.0.0`.
-4. Open the local address printed by the terminal in Safari, if that app exposes the server to Safari. iOS terminal apps differ, and some cannot host a server accessible to Safari.
+Firebase web configuration identifies the project; it is not a server secret. Do not put service-account private keys in this client app.
 
-## Build
-With Node.js 20.19+ or 22.12+:
-```bash
-npm install
-npm run build
-npm run dev -- --host 0.0.0.0
-```
-The production output is `dist/`. Deploy that folder to a static host if you want to install it as a PWA through HTTPS. A free static hosting tier may be available but provider terms can change. No backend is required.
+## Features
+- Local document library stored with IndexedDB.
+- Import documents from the phone's file picker.
+- Capture pages with the phone camera or select existing images.
+- Convert multiple images into a multi-page A4 PDF, with brightness, contrast, rotation and image filters.
+- Full continuous PDF viewing.
+- PDF rotate, split, merge and re-save/optimize (re-saving is not guaranteed to reduce file size).
+- DOCX text extraction and preview.
+- DOCX-to-PDF conversion (complex layouts may differ).
+- PDF-to-DOCX conversion by extracting selectable text and reflowing it into Word.
+- Export, download and share documents using supported phone/browser features.
+- Recent documents, rename, Trash and restore.
+- Account and devices, Trash, Settings.
+- Installable PWA shell and service-worker caching.
 
-## Install on iPhone
-1. Open the deployed HTTPS site in Safari.
-2. Tap Share.
-3. Choose Add to Home Screen.
-4. Open Files from the home screen.
+## Storage and account behavior
+Google sign-in authenticates the person. It does not sync documents across devices. Document files are stored locally in IndexedDB on the device/browser that imported them. Clearing Safari website data or removing site data may remove locally stored documents, so export important files for backup.
 
-## Install on Android
-1. Open the deployed HTTPS site in Chrome.
-2. Open the browser menu.
-3. Choose Install app or Add to Home screen.
+## Known limitations
+- This is a web app, not a native app, so some iOS file-system and camera features depend on Safari support.
+- Camera scanning does not yet provide automatic document-edge detection and perspective correction.
+- PDF-to-DOCX does not reproduce exact page layouts and does not OCR image-only scanned PDFs.
+- DOCX-to-PDF may change pagination and may render content as images.
+- The PDF compression/re-save function may not significantly reduce file size.
+- Some dependencies may need to load online on first use before offline behavior is complete.
 
-## Files storage
-The app stores imported file Blobs in IndexedDB. Files remain on that browser profile and device. Export copies for durable backup. Clearing browser/site data may delete the local library.
+## Source and build
+The full editable source is in this repository:
+- src/main.jsx: application interface and document features.
+- src/style.css: interface styling.
+- src/firebase.js: Google sign-in configuration.
+- index.html: app entry page.
+- public/manifest.webmanifest: installable PWA metadata.
+- public/sw.js: service-worker cache.
+- vite.config.js: Vite configuration.
+- .github/workflows/deploy.yml: GitHub Pages deployment.
 
-## No false promises
-This source is a functional MVP implementation but has not been tested on your specific iPhone or on Android devices in this environment. Validate camera permissions, PDF generation, file sizes and offline reload before using it for important documents.
+Build with Node.js 20.19+ or 22.12+:
 
+    npm install
+    npm run build
+    npm run dev -- --host 0.0.0.0
 
-## Optional free static deployment using GitHub Pages
+## Deploy and install
+GitHub Actions builds and deploys the app from the main branch. Open repository Settings → Pages and set the source to GitHub Actions.
 
-The repository includes `.github/workflows/deploy.yml`. Once all source files are in a GitHub repository on the `main` branch:
-1. Open the repository in GitHub.
-2. Go to Settings → Pages.
-3. Under Build and deployment, choose **GitHub Actions** as the source.
-4. Push/commit the source files to `main` or run the workflow from Actions.
-5. Wait for the workflow to finish. The deployed site URL appears in the workflow run and Pages settings.
+- Live app: https://bivaxc.github.io/Files-App/
+- Repository: https://github.com/bivaxc/Files-App
+- Workflow runs: https://github.com/bivaxc/Files-App/actions
+- Download current source ZIP: https://github.com/bivaxc/Files-App/archive/refs/heads/main.zip
 
-GitHub Pages static hosting and GitHub Actions have usage limits and terms that can change. This app does not need a paid backend, but GitHub account availability and limits apply. A public repository is usually the simplest free path for open-source code.
+On iPhone, open the live app in Safari → Share → Add to Home Screen. On Android, open in Chrome and choose Install app/Add to Home screen.
