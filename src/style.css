@@ -21,3 +21,5 @@
 .bottomNav button.selected{color:#3b6cf0;background:rgba(30,30,32,.85)}
 .bottomNav button.selected .iconSvg{stroke:currentColor}
 @media(max-width:380px){.bottomNav{left:14px;right:14px}.bottomNav button small{font-size:11px}}
+
+.meHeading{font-size:19px;margin:8px 0 14px}.settingsMenu{background:#292a2d;border-radius:17px;overflow:hidden;margin-bottom:16px}.settingsMenuRow{width:100%;display:flex;align-items:center;gap:13px;text-align:left;background:transparent;border:0;border-radius:0;padding:17px 15px}.settingsMenuRow+.settingsMenuRow{border-top:1px solid #3d4043}.settingsMenuIcon{width:42px;height:42px;border-radius:12px;background:#38393d;display:grid;place-items:center;color:#b8caff;flex-shrink:0}.settingsMenuText{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}.settingsMenuText b{font-size:15px}.settingsMenuText small{font-size:12px;color:#9aa0a6;line-height:1.4}.settingsMenuRow strong{font-size:24px;color:#8a8d91;font-weight:400}.fileRow .danger{font-size:11px;padding:8px}.fileRow button{font-size:11px;padding:8px}
