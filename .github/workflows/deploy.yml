@@ -30,48 +30,13 @@ jobs:
         with:
           node-version: 20
 
-      - name: Extract project ZIP
+      - name: Use repository source files
         run: |
-          mkdir extracted
-          unzip -q Files-PWA-MVP.zip -d extracted
-          PACKAGE_JSON=$(find extracted -name package.json -not -path '*/node_modules/*' -print -quit)
-          if [ -z "$PACKAGE_JSON" ]; then
-            echo "No package.json found inside the ZIP"
-            exit 1
-          fi
-          PROJECT_DIR=$(dirname "$PACKAGE_JSON")
-          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-
-      - name: Add src and public folders to repository
-        run: |
-          if [ -d "${PROJECT_DIR}/src" ]; then
-            rm -rf src
-            cp -R "${PROJECT_DIR}/src" ./src
-          else
-            echo "No src folder found in extracted project"
-            exit 1
-          fi
-          if [ -d "${PROJECT_DIR}/public" ]; then
-            rm -rf public
-            cp -R "${PROJECT_DIR}/public" ./public
-          else
-            echo "No public folder found in extracted project; creating an empty public folder"
-            mkdir -p public
-            touch public/.gitkeep
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src public
-          if ! git diff --cached --quiet; then
-            git commit -m "Add src and public project folders"
-            git push
-          else
-            echo "src and public are already up to date"
-          fi
-
-      - name: Remove floating blue plus button
-        run: |
-          sed -i '/className="fab"/d' "${PROJECT_DIR}/src/main.jsx"
+          test -f package.json
+          test -f vite.config.js
+          test -d src
+          test -d public || mkdir -p public
+          echo "PROJECT_DIR=$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
 
       - name: Install dependencies
         working-directory: ${{ env.PROJECT_DIR }}
