@@ -6,6 +6,11 @@ on:
       - main
     paths:
       - "Files-PWA-MVP.zip"
+      - "src/**"
+      - "public/**"
+      - "package.json"
+      - "package-lock.json"
+      - "vite.config.js"
       - ".github/workflows/deploy.yml"
   workflow_dispatch:
 
