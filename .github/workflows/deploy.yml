@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -41,6 +41,33 @@ jobs:
           fi
           PROJECT_DIR=$(dirname "$PACKAGE_JSON")
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+
+      - name: Add src and public folders to repository
+        run: |
+          if [ -d "${PROJECT_DIR}/src" ]; then
+            rm -rf src
+            cp -R "${PROJECT_DIR}/src" ./src
+          else
+            echo "No src folder found in extracted project"
+            exit 1
+          fi
+          if [ -d "${PROJECT_DIR}/public" ]; then
+            rm -rf public
+            cp -R "${PROJECT_DIR}/public" ./public
+          else
+            echo "No public folder found in extracted project; creating an empty public folder"
+            mkdir -p public
+            touch public/.gitkeep
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src public
+          if ! git diff --cached --quiet; then
+            git commit -m "Add src and public project folders"
+            git push
+          else
+            echo "src and public are already up to date"
+          fi
 
       - name: Remove floating blue plus button
         run: |
