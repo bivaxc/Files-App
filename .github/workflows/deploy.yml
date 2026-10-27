@@ -42,6 +42,10 @@ jobs:
           PROJECT_DIR=$(dirname "$PACKAGE_JSON")
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
+      - name: Remove floating blue plus button
+        run: |
+          sed -i '/className="fab"/d' "${PROJECT_DIR}/src/main.jsx"
+
       - name: Install dependencies
         working-directory: ${{ env.PROJECT_DIR }}
         run: npm install
