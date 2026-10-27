@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "Files-PWA-MVP.zip"
+      - "index.html"
       - "src/**"
       - "public/**"
       - "package.json"
